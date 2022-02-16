@@ -122,7 +122,7 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
         private bool skipFrame = true;
         // private FMOD.Studio.EventInstance bgSfx;
 
-        // private VirtualRenderTarget buffer;
+        private VirtualRenderTarget buffer;
         private Color[] pixels = new Color[128 * 128];
         private Vector2 offset = Vector2.Zero;
 
@@ -132,13 +132,13 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
         // private FMOD.Studio.EventInstance snapshot;
 
         // pico-8 boot
-        // private MTexture picoBootLogo;
+        private MTexture picoBootLogo;
 
         // levels tilemap
         private byte[] tilemap;
 
         // sprites & sprite mask
-        // private MTexture[] sprites;
+        private MTexture[] sprites;
         private byte[] mask = new byte[] {
             0, 0, 0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             4, 2, 0,  0,  0,  0,  0, 0, 0, 0, 0, 2, 0, 0, 0, 0,
@@ -173,16 +173,21 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
         private Dictionary<Color, int> paletteSwap = new Dictionary<Color, int>();
 
         // font
-        // private MTexture[] font;
+        private MTexture[] font;
         private string fontMap = "abcdefghijklmnopqrstuvwxyz0123456789~!@#4%^&*()_+-=?:.";
 
         public Emulator(int levelX = 0, int levelY = 0)
         {
             bootLevel = new Point(levelX, levelY);
-            // buffer = VirtualContent.CreateRenderTarget("pico-8", 128, 128);
+            buffer = new VirtualRenderTarget("pico-8", 128, 128);
+            Engine.Graphics.GraphicsDevice.SetRenderTarget(buffer.Target);
 
             // sprites
-            // @TODO
+            var atlas = Gfx.Game["atlas"];
+            sprites = new MTexture[(atlas.Width / 8) * (atlas.Height / 8)];
+            for (int ty = 0; ty < atlas.Height / 8; ty++)
+                for (int tx = 0; tx < atlas.Width / 8; tx++)
+                    sprites[tx + ty * (atlas.Width / 8)] = atlas.GetSubtexture(tx * 8, ty * 8, 8, 8);
 
             // tilemap
             var tiledata = MapData;
@@ -196,46 +201,206 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
             }
 
             // font
-            // @TODO
+            var fontatlas = Gfx.Game["font"];
+            font = new MTexture[(fontatlas.Width / 4) * (fontatlas.Height / 6)];
+            for (var ty = 0; ty < fontatlas.Height / 6; ty++)
+                for (var tx = 0; tx < fontatlas.Width / 4; tx++)
+                    font[tx + ty * (fontatlas.Width / 4)] = fontatlas.GetSubtexture(tx * 4, ty * 6, 4, 6);
 
             // boot stuff
-            // picoBootLogo = GFX.Game["pico8/logo"];
+            picoBootLogo = Gfx.Game["logo"];
             ResetScreen();
 
-            // @TODO
+            // Audio.SetMusic(null);
+            // Audio.SetAmbience(null);
+            // new FadeWipe(this, true);
+            RendererList.UpdateLists();
         }
 
         private void ResetScreen()
         {
-            // Engine.Graphics.GraphicsDevice.Textures[0] = null;
-            // Engine.Graphics.GraphicsDevice.Textures[1] = null;
+            Engine.Graphics.GraphicsDevice.Textures[0] = null;
+            Engine.Graphics.GraphicsDevice.Textures[1] = null;
 
-            // for (var x = 0; x < 128; x++)
-            //     for (var y = 0; y < 128; y++)
-            //         pixels[x + y * 128] = Color.Black;
-            // buffer.Target.SetData(pixels);
+            for (var x = 0; x < 128; x++)
+                for (var y = 0; y < 128; y++)
+                    pixels[x + y * 128] = Color.Black;
+            buffer.Target.SetData(pixels);
         }
 
         #region Scene Methods
 
         public override void Begin()
         {
-            //
+            // bgSfx = Audio.Play(Sfxs.env_amb_03_pico8_closeup);
+            base.Begin();
         }
 
         public override void End()
         {
-            //
+            // buffer.Dispose();
+
+            base.End();
         }
 
         public override void Update()
         {
-            //
+            base.Update();
+
+            // pause menu
+            // @TODO
+
+            // this is a pretty dumb hack but because Celeste is locked to 60fps
+            // and PICO-8 runs at 30 ... we just skip every 2nd frame
+            // the game buffers inputs so they wont get eaten
+            skipFrame = !skipFrame;
+            if (skipFrame)
+                return;
+
+            // don't update the game
+            gameDelay -= Engine.DeltaTime;
+            if (!gameActive || gameDelay > 0)
+                return;
+
+            // recreating the PICO-8 Boot Sequence
+            if (booting) {
+                Engine.Graphics.GraphicsDevice.Textures[0] = null;
+                Engine.Graphics.GraphicsDevice.Textures[1] = null;
+
+                gameFrame++;
+                var t = gameFrame - 20;
+
+                if (t == 1) {
+                    for (var y = 0; y < 128; y++)
+                        for (var x = 2; x < 128; x += 8)
+                            pixels[x + y * 128] = colors[Calc.Random.Next(4) + (y / 32)];
+                    buffer.Target.SetData(pixels);
+                }
+                if (t == 4) {
+                    for (var y = 0; y < 128; y += 2)
+                        for (var x = 0; x < 128; x += 4)
+                            pixels[x + y * 128] = colors[6 + (((x + y) / 8) & 7)];
+                    buffer.Target.SetData(pixels);
+                }
+                if (t == 7) {
+                    for (var y = 0; y < 128; y += 3)
+                        for (var x = 2; x < 128; x += 4)
+                            pixels[x + y * 128] = colors[10 + Calc.Random.Next(4)];
+                    buffer.Target.SetData(pixels);
+                }
+
+                // wide
+                if (t == 9) {
+                    for (var y = 0; y < 128; y++)
+                        for (var x = 1; x < 127; x += 2)
+                            pixels[x + y * 128] = pixels[x + 1 + y * 128];
+                    buffer.Target.SetData(pixels);
+                }
+
+                // stripe blank
+                if (t == 12) {
+                    for (var y = 0; y < 128; y++)
+                        if ((y & 3) > 0)
+                            for (var x = 0; x < 128; x++)
+                                pixels[x + y * 128] = colors[0];
+                    buffer.Target.SetData(pixels);
+                }
+
+                // clear
+                if (t == 15) {
+                    for (var y = 0; y < 128; y++)
+                        for (var x = 0; x < 128; x++)
+                            pixels[x + y * 128] = colors[0];
+                    buffer.Target.SetData(pixels);
+                }
+
+                // if (t == 30)
+                //     Audio.Play(Sfxs.music_pico8_boot);
+
+                // logo
+                if (t == 30 || t == 35 || t == 40) {
+                    // Engine.Graphics.GraphicsDevice.SetRenderTarget(buffer);
+                    Engine.Graphics.GraphicsDevice.Clear(colors[0]);
+                    Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullNone);
+                    picoBootLogo.Draw(new Vector2(1, 1));
+                    if (t >= 35)
+                        print("pico-8 0.1.9B", 1, 18, 6);
+                    if (t >= 40)
+                    {
+                        print("(c) 2014-16 lexaloffle games llp", 1, 24, 6);
+                        print("booting cartridge..", 1, 36, 6);
+                    }
+                    Draw.SpriteBatch.End();
+                    Engine.Graphics.GraphicsDevice.SetRenderTarget(null);
+                }
+
+                // start it up
+                if (t == 90) {
+                    gameFrame = 0;
+                    game = new Classic();
+                    game.Init(this);
+                    if (bootLevel.X != 0 || bootLevel.Y != 0)
+                        game.load_room(bootLevel.X, bootLevel.Y);
+                }
+            }
+            // main gameplay
+            else {
+                gameFrame++;
+                game.Update();
+
+                if (game.freeze <= 0) {
+                    // draw
+                    {
+                        // Engine.Graphics.GraphicsDevice.SetRenderTarget(buffer);
+                        Engine.Graphics.GraphicsDevice.Clear(colors[0]);
+                        Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullNone, null, Matrix.CreateTranslation(-offset.X, -offset.Y, 0));
+                        game.Draw();
+                        Draw.SpriteBatch.End();
+
+                        // unset in case we do a palette swap
+                        Engine.Graphics.GraphicsDevice.SetRenderTarget(null);
+                    }
+
+                    // do a palette swap
+                    // this could be done with a shader but on a 128x128 screen ... I don't really care
+                    if (paletteSwap.Count > 0) {
+                        buffer.Target.GetData(pixels);
+
+                        for (var i = 0; i < pixels.Length; i++)
+                        {
+                            var index = 0;
+                            if (paletteSwap.TryGetValue(pixels[i], out index))
+                                pixels[i] = colors[index];
+                        }
+
+                        buffer.Target.SetData(pixels);
+                    }
+                }
+            }
         }
 
         public override void Render()
         {
-            //
+            Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullNone, null, Engine.ScreenMatrix);
+            {
+                var scale = 6;
+                var size = new Vector2(buffer.Width * scale, buffer.Height * scale);
+                // var pos = new Vector2(Celeste.TargetWidth - size.X, Celeste.TargetHeight - size.Y) / 2f;
+                var pos = new Vector2(320 - size.X, 180 - size.Y) / 2f;
+                var flip = false;
+
+                // surroundings
+                Gfx.Game["consolebg"].Draw(Vector2.Zero, Vector2.Zero, Color.White, scale);
+
+                // the buffer / emulator
+                Draw.SpriteBatch.Draw(buffer.Target, pos, buffer.Bounds, Color.White, 0f, Vector2.Zero, scale, (flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
+            }
+            Draw.SpriteBatch.End();
+
+            // Pause menu.
+            // @TODO
+
+            base.Render();
         }
 
         #endregion
@@ -368,25 +533,25 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
             var top = Math.Min(y, y2);
             var width = Math.Max(x, x2) - left + 1;
             var height = Math.Max(y, y2) - top + 1;
-            // Draw.Rect(left, top, width, height, colors[((int)c) % 16]);
+            Draw.Rect(left, top, width, height, colors[((int)c) % 16]);
         }
 
         public void circfill(float x, float y, float r, float c)
         {
-            // var color = colors[((int)c) % 16];
-            // if (r <= 1) {
-            //     Draw.Rect(x - 1, y, 3, 1, color);
-            //     Draw.Rect(x, y - 1, 1, 3, color);
-            // }
-            // else if (r <= 2) {
-            //     Draw.Rect(x - 2, y - 1, 5, 3, color);
-            //     Draw.Rect(x - 1, y - 2, 3, 5, color);
-            // }
-            // else if (r <= 3) {
-            //     Draw.Rect(x - 3, y - 1, 7, 3, color);
-            //     Draw.Rect(x - 1, y - 3, 3, 7, color);
-            //     Draw.Rect(x - 2, y - 2, 5, 5, color);
-            // }
+            var color = colors[((int)c) % 16];
+            if (r <= 1) {
+                Draw.Rect(x - 1, y, 3, 1, color);
+                Draw.Rect(x, y - 1, 1, 3, color);
+            }
+            else if (r <= 2) {
+                Draw.Rect(x - 2, y - 1, 5, 3, color);
+                Draw.Rect(x - 1, y - 2, 3, 5, color);
+            }
+            else if (r <= 3) {
+                Draw.Rect(x - 3, y - 1, 7, 3, color);
+                Draw.Rect(x - 1, y - 3, 3, 7, color);
+                Draw.Rect(x - 2, y - 2, 5, 5, color);
+            }
         }
 
         public void print(string str, float x, float y, float c)
@@ -402,34 +567,34 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
                         break;
                     }
                 if (index >= 0)
-                    // font[index].Draw(new Vector2(left, y), Vector2.Zero, color);
+                    font[index].Draw(new Vector2(left, y), Vector2.Zero, color);
                 left += 4;
             }
         }
 
         public void map(int mx, int my, int tx, int ty, int mw, int mh, int mask = 0)
         {
-            // for (int x = 0; x < mw; x++) {
-            //     for (int y = 0; y < mh; y++) {
-            //         var tile = tilemap[x + mx + (y + my) * 128];
-            //         if (tile < sprites.Length)
-            //             if (mask == 0 || fget(tile, mask))
-            //                 sprites[tile].Draw(new Vector2(tx + x * 8, ty + y * 8));
-            //     }
-            // }
+            for (int x = 0; x < mw; x++) {
+                for (int y = 0; y < mh; y++) {
+                    var tile = tilemap[x + mx + (y + my) * 128];
+                    if (tile < sprites.Length)
+                        if (mask == 0 || fget(tile, mask))
+                            sprites[tile].Draw(new Vector2(tx + x * 8, ty + y * 8));
+                }
+            }
         }
 
         public void spr(float sprite, float x, float y, int columns = 1, int rows = 1, bool flipX = false, bool flipY = false)
         {
-            // var flip = SpriteEffects.None;
-            // if (flipX)
-            //     flip |= SpriteEffects.FlipHorizontally;
-            // if (flipY)
-            //     flip |= SpriteEffects.FlipVertically;
+            var flip = SpriteEffects.None;
+            if (flipX)
+                flip |= SpriteEffects.FlipHorizontally;
+            if (flipY)
+                flip |= SpriteEffects.FlipVertically;
 
-            // for (int sx = 0; sx < columns; sx++)
-            //     for (int sy = 0; sy < rows; sy++)
-            //         sprites[(int)sprite + sx + sy * 16].Draw(new Vector2((int)Math.Floor(x + sx * 8), (int)Math.Floor(y + sy * 8)), Vector2.Zero, Color.White, 1f, 0f, flip);
+            for (int sx = 0; sx < columns; sx++)
+                for (int sy = 0; sy < rows; sy++)
+                    sprites[(int)sprite + sx + sy * 16].Draw(new Vector2((int)Math.Floor(x + sx * 8), (int)Math.Floor(y + sy * 8)), Vector2.Zero, Color.White, 1f, 0f, flip);
         }
 
         #endregion

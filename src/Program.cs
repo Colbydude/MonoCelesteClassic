@@ -7,7 +7,7 @@ namespace MonoCelesteClassic
         [STAThread]
         static void Main()
         {
-            using (var game = new GameMain())
+            using (var game = new Engine())
                 game.Run();
         }
     }

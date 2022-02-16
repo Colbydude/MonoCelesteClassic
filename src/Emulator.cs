@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace MonoCelesteClassic
 {
-    public class Emulator
+    public class Emulator : Scene
     {
         #region Map
 
@@ -199,8 +199,46 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
             // @TODO
 
             // boot stuff
+            // picoBootLogo = GFX.Game["pico8/logo"];
+            ResetScreen();
+
             // @TODO
         }
+
+        private void ResetScreen()
+        {
+            // Engine.Graphics.GraphicsDevice.Textures[0] = null;
+            // Engine.Graphics.GraphicsDevice.Textures[1] = null;
+
+            // for (var x = 0; x < 128; x++)
+            //     for (var y = 0; y < 128; y++)
+            //         pixels[x + y * 128] = Color.Black;
+            // buffer.Target.SetData(pixels);
+        }
+
+        #region Scene Methods
+
+        public override void Begin()
+        {
+            //
+        }
+
+        public override void End()
+        {
+            //
+        }
+
+        public override void Update()
+        {
+            //
+        }
+
+        public override void Render()
+        {
+            //
+        }
+
+        #endregion
 
         #region Emulator Methods
 

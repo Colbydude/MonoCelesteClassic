@@ -9,6 +9,9 @@ namespace MonoCelesteClassic
         Right = 1
     }
 
+    /// <summary>
+    /// Global input manager.
+    /// </summary>
     public static class Input
     {
         // axes
@@ -51,6 +54,11 @@ namespace MonoCelesteClassic
             );
         }
 
+        /// <summary>
+        /// Simple helper for determining the dash direction.
+        /// </summary>
+        /// <param name="facing"></param>
+        /// <returns></returns>
         public static Vector2 GetAimVector(Facings facing)
         {
             if (MoveX == 0 && MoveY == 0) {

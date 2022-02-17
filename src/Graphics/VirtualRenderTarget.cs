@@ -4,6 +4,9 @@ using System;
 
 namespace MonoCelesteClassic
 {
+    /// <summary>
+    /// Simple container around a RenderTarget2D.
+    /// </summary>
     public class VirtualRenderTarget : IDisposable
     {
         public RenderTarget2D Target { get; private set; }

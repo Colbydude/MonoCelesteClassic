@@ -1,12 +1,15 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace MonoCelesteClassic
 {
+    /// <summary>
+    /// This scene runs the C# version of the PICO-8 version of Celeste.
+    /// It recreates various methods that PICO-8 has built in.
+    /// </summary>
     public class Emulator : Scene
     {
         #region Map
@@ -372,7 +375,7 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
             {
                 var scale = 6;
                 var size = new Vector2(buffer.Width * scale, buffer.Height * scale);
-                var pos = new Vector2(Engine.Width - size.X, Engine.Height - size.Y) / 2f;
+                var pos = new Vector2(Celeste.TargetWidth - size.X, Celeste.TargetHeight - size.Y) / 2f;
                 var flip = false;
 
                 // surroundings
@@ -449,12 +452,12 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
 
         public float sin(float a)
         {
-            return (float) Math.Sin((1 - a) * Calc.TAU);
+            return (float) Math.Sin((1 - a) * Calc.Tau);
         }
 
         public float cos(float a)
         {
-            return (float) Math.Cos((1 - a) * Calc.TAU);
+            return (float) Math.Cos((1 - a) * Calc.Tau);
         }
 
         public bool btn(int index)

@@ -25,7 +25,7 @@ namespace MonoCelesteClassic
         #region Math
 
         private const string Hex = "0123456789ABCDEF";
-        public const float TAU = MathF.PI * 2f;
+        public const float Tau = MathF.PI * 2f;
 
         public static float Angle(Vector2 from, Vector2 to)
         {

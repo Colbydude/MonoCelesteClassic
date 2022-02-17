@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
+using System.Runtime;
 
 namespace MonoCelesteClassic
 {
@@ -40,17 +40,19 @@ namespace MonoCelesteClassic
 
         // util
         public static Color ClearColor;
+        public static bool ExitOnEscapeKeypress;
 
         // scene
         private Scene scene;
         private Scene nextScene;
 
-        public Engine()
+        public Engine(int width, int height, int windowWidth, int windowHeight, string windowTitle, bool fullscreen)
         {
             Instance = this;
 
-            Width = 1920;
-            Height = 1080;
+            Title = Window.Title = windowTitle;
+            Width = width;
+            Height = height;
             ClearColor = Color.Black;
 
             Graphics = new GraphicsDeviceManager(this);
@@ -63,20 +65,38 @@ namespace MonoCelesteClassic
             Graphics.PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8;
             Graphics.ApplyChanges();
 
+#if PS4 || XBOXONE
+            Graphics.PreferredBackBufferWidth = 1920;
+            Graphics.PreferredBackBufferHeight = 1080;
+#elif NSWITCH
+            Graphics.PreferredBackBufferWidth = 1280;
+            Graphics.PreferredBackBufferHeight = 720;
+#else
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += OnClientSizeChanged;
 
-            Graphics.PreferredBackBufferWidth = Width;
-            Graphics.PreferredBackBufferWidth = Height;
-            Graphics.IsFullScreen = false;
-            Graphics.ApplyChanges();
+            if (fullscreen) {
+                Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                Graphics.IsFullScreen = true;
+            }
+            else {
+                Graphics.PreferredBackBufferWidth = windowWidth;
+                Graphics.PreferredBackBufferHeight = windowHeight;
+                Graphics.IsFullScreen = false;
+            }
+#endif
 
             Content.RootDirectory = @"Content";
 
             IsMouseVisible = false;
             IsFixedTimeStep = false;
+            ExitOnEscapeKeypress = true;
+
+            GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
         }
 
+#if !CONSOLE
         protected virtual void OnClientSizeChanged(object sender, EventArgs e)
         {
             if (Window.ClientBounds.Width > 0 && Window.ClientBounds.Height > 0 && !resizing) {
@@ -89,6 +109,7 @@ namespace MonoCelesteClassic
                 resizing = false;
             }
         }
+#endif
 
         protected virtual void OnGraphicsCreate(object sender, EventArgs e)
         {
@@ -104,26 +125,14 @@ namespace MonoCelesteClassic
         {
             base.Initialize();
 
-            Title = Window.Title = "Mono Celeste Classic";
-
             MInput.Initialize();
-            Input.Bind();
         }
 
         protected override void LoadContent()
         {
             base.LoadContent();
 
-            Gfx.Game.Add("atlas", new MTexture(Content.Load<Texture2D>("Graphics/atlas")));
-            Gfx.Game.Add("consolebg", new MTexture(Content.Load<Texture2D>("Graphics/consolebg")));
-            Gfx.Game.Add("font", new MTexture(Content.Load<Texture2D>("Graphics/font")));
-            Gfx.Game.Add("logo", new MTexture(Content.Load<Texture2D>("Graphics/logo")));
-
-            // @TODO Load Audio
-
             MonoCelesteClassic.Draw.Initialize(GraphicsDevice);
-
-            Scene = new Emulator();
         }
 
         protected override void Update(GameTime gameTime)
@@ -134,10 +143,12 @@ namespace MonoCelesteClassic
             // Update input
             MInput.Update();
 
-            if (MInput.Keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.Escape)) {
+#if !CONSOLE
+            if (ExitOnEscapeKeypress && MInput.Keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.Escape)) {
                 Exit();
                 return;
             }
+#endif
 
             // Update current scene
             if (FreezeTimer > 0)
@@ -197,6 +208,8 @@ namespace MonoCelesteClassic
             MInput.Shutdown();
         }
 
+        #region Scene
+
         /// <summary>
         /// Called after a Scene ends, before the next Scene begins.
         /// </summary>
@@ -217,10 +230,40 @@ namespace MonoCelesteClassic
             set { Instance.nextScene = value; }
         }
 
+        #endregion
+
         #region Screen
 
         public static Viewport Viewport { get; private set; }
         public static Matrix ScreenMatrix;
+
+        public static void SetWindowed(int width, int height)
+        {
+#if !CONSOLE
+            if (width > 0 && height > 0) {
+                resizing = true;
+                Graphics.PreferredBackBufferWidth = width;
+                Graphics.PreferredBackBufferHeight = height;
+                Graphics.IsFullScreen = false;
+                Graphics.ApplyChanges();
+                Console.WriteLine("WINDOW-" + width + "x" + height);
+                resizing = false;
+            }
+#endif
+        }
+
+        public static void SetFullscreen()
+        {
+#if !CONSOLE
+            resizing = true;
+            Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            Graphics.IsFullScreen = true;
+            Graphics.ApplyChanges();
+            Console.WriteLine("FULLSCREEN");
+            resizing = false;
+#endif
+        }
 
         private void UpdateView()
         {

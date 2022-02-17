@@ -7,11 +7,6 @@ namespace MonoCelesteClassic
     public static class Draw
     {
         /// <summary>
-        /// The currently-rendering Renderer
-        /// </summary>
-        public static Renderer Renderer { get; internal set; }
-
-        /// <summary>
         /// All 2D rendering is done through this SpriteBatch instance
         /// </summary>
         public static SpriteBatch SpriteBatch { get; private set; }

@@ -109,8 +109,6 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
 
         #endregion
 
-        // public bool CanPause { get { return pauseMenu == null; } }
-
         private Classic game;
         private int gameFrame;
         private bool gameActive = true;
@@ -118,18 +116,12 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
         private bool booting { get { return game == null; } }
         private Point bootLevel;
 
-        // private bool leaving;
         private bool skipFrame = true;
         // private FMOD.Studio.EventInstance bgSfx;
 
         private VirtualRenderTarget buffer;
         private Color[] pixels = new Color[128 * 128];
         private Vector2 offset = Vector2.Zero;
-
-        // pausing
-        // private TextMenu pauseMenu = null;
-        // private float pauseFade = 0f;
-        // private FMOD.Studio.EventInstance snapshot;
 
         // pico-8 boot
         private MTexture picoBootLogo;
@@ -213,7 +205,6 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
             // Audio.SetMusic(null);
             // Audio.SetAmbience(null);
             // new FadeWipe(this, true);
-            RendererList.UpdateLists();
         }
 
         private void ResetScreen()
@@ -245,9 +236,6 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
         public override void Update()
         {
             base.Update();
-
-            // pause menu
-            // @TODO
 
             // this is a pretty dumb hack but because Celeste is locked to 60fps
             // and PICO-8 runs at 30 ... we just skip every 2nd frame
@@ -365,8 +353,7 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
                     if (paletteSwap.Count > 0) {
                         buffer.Target.GetData(pixels);
 
-                        for (var i = 0; i < pixels.Length; i++)
-                        {
+                        for (var i = 0; i < pixels.Length; i++) {
                             var index = 0;
                             if (paletteSwap.TryGetValue(pixels[i], out index))
                                 pixels[i] = colors[index];
@@ -394,9 +381,6 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
                 Draw.SpriteBatch.Draw(buffer.Target, pos, buffer.Bounds, Color.White, 0f, Vector2.Zero, scale, (flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
             }
             Draw.SpriteBatch.End();
-
-            // Pause menu.
-            // @TODO
 
             base.Render();
         }
@@ -478,19 +462,19 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
             var aim = Vector2.Zero;
 
             if (index == 0) {
-                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.A);
+                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.Left);
                 // return aim.X < 0;
             }
             else if (index == 1) {
-                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.D);
+                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.Right);
                 // return aim.X > 0;
             }
             else if (index == 2) {
-                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.W);
+                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.Up);
                 // return aim.Y < 0;
             }
             else if (index == 3) {
-                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.S);
+                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.Down);
                 // return aim.Y > 0;
             }
             else if (index == 4)

@@ -24,30 +24,30 @@ namespace MonoCelesteClassic
             MoveX = new VirtualAxis(
                 new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehaviors.CancelOut, Keys.A, Keys.D),
                 new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehaviors.CancelOut, Keys.Left, Keys.Right),
-                new VirtualAxis.PadDpadLeftRight(1),
-                new VirtualAxis.PadLeftStickX(1, 0.2f)
+                new VirtualAxis.PadDpadLeftRight(0),
+                new VirtualAxis.PadLeftStickX(0, 0.2f)
             );
 
             MoveY = new VirtualAxis(
                 new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehaviors.CancelOut, Keys.W, Keys.S),
                 new VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehaviors.CancelOut, Keys.Up, Keys.Down),
-                new VirtualAxis.PadDpadUpDown(1),
-                new VirtualAxis.PadLeftStickY(1, 0.2f)
+                new VirtualAxis.PadDpadUpDown(0),
+                new VirtualAxis.PadLeftStickY(0, 0.2f)
             );
 
             Jump = new VirtualButton(
                 0.15f,
                 new VirtualButton.KeyboardKey(Keys.Z),
                 new VirtualButton.KeyboardKey(Keys.C),
-                new VirtualButton.PadButton(1, Buttons.A)
+                new VirtualButton.PadButton(0, Buttons.A)
             );
 
             Dash = new VirtualButton(
                 0.15f,
                 new VirtualButton.KeyboardKey(Keys.X),
                 new VirtualButton.KeyboardKey(Keys.V),
-                new VirtualButton.PadButton(1, Buttons.X),
-                new VirtualButton.PadButton(1, Buttons.B)
+                new VirtualButton.PadButton(0, Buttons.X),
+                new VirtualButton.PadButton(0, Buttons.B)
             );
         }
 

@@ -1,9 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace MonoCelesteClassic
 {
-    public class VirtualRenderTarget
+    public class VirtualRenderTarget : IDisposable
     {
         public RenderTarget2D Target { get; private set; }
 
@@ -14,6 +15,11 @@ namespace MonoCelesteClassic
         public VirtualRenderTarget(string name, int width, int height)
         {
             Target = new RenderTarget2D(Engine.Graphics.GraphicsDevice, width, height, false, Engine.Graphics.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24Stencil8);
+        }
+
+        public void Dispose()
+        {
+            Target.Dispose();
         }
     }
 }

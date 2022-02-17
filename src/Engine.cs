@@ -105,6 +105,8 @@ namespace MonoCelesteClassic
             base.Initialize();
 
             Title = Window.Title = "Mono Celeste Classic";
+
+            MInput.Initialize();
         }
 
         protected override void LoadContent()
@@ -116,6 +118,10 @@ namespace MonoCelesteClassic
             Gfx.Game.Add("font", new MTexture(Content.Load<Texture2D>("Graphics/font")));
             Gfx.Game.Add("logo", new MTexture(Content.Load<Texture2D>("Graphics/logo")));
 
+            // @TODO Load Audio
+
+            // Setup Key bindings.
+
             MonoCelesteClassic.Draw.Initialize(GraphicsDevice);
 
             Scene = new Emulator();
@@ -126,9 +132,10 @@ namespace MonoCelesteClassic
             RawDeltaTime = (float) gameTime.ElapsedGameTime.TotalSeconds;
             DeltaTime = RawDeltaTime * TimeRate;
 
-            // @TODO Input
+            // Update input
+            MInput.Update();
 
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) {
+            if (MInput.Keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.Escape)) {
                 Exit();
                 return;
             }
@@ -183,6 +190,12 @@ namespace MonoCelesteClassic
                 fpsCounter = 0;
                 counterElapsed -= TimeSpan.FromSeconds(1);
             }
+        }
+
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            base.OnExiting(sender, args);
+            MInput.Shutdown();
         }
 
         /// <summary>

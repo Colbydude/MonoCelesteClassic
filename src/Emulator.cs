@@ -237,7 +237,7 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
 
         public override void End()
         {
-            // buffer.Dispose();
+            buffer.Dispose();
 
             base.End();
         }
@@ -474,7 +474,29 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
 
         public bool btn(int index)
         {
-            // @TODO
+            // var aim = new Vector2(Input.MoveX, Input.MoveY);
+            var aim = Vector2.Zero;
+
+            if (index == 0) {
+                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.A);
+                // return aim.X < 0;
+            }
+            else if (index == 1) {
+                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.D);
+                // return aim.X > 0;
+            }
+            else if (index == 2) {
+                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.W);
+                // return aim.Y < 0;
+            }
+            else if (index == 3) {
+                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.S);
+                // return aim.Y > 0;
+            }
+            else if (index == 4)
+                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.Z);
+            else if (index == 5)
+                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.X);
 
             return false;
         }

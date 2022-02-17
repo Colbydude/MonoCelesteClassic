@@ -13,7 +13,7 @@ namespace MonoCelesteClassic
 
         public VirtualRenderTarget(string name, int width, int height)
         {
-            Target = new RenderTarget2D(Engine.Graphics.GraphicsDevice, width, height);
+            Target = new RenderTarget2D(Engine.Graphics.GraphicsDevice, width, height, false, Engine.Graphics.GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24Stencil8);
         }
     }
 }

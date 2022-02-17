@@ -118,7 +118,7 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
         private bool booting { get { return game == null; } }
         private Point bootLevel;
 
-        private bool leaving;
+        // private bool leaving;
         private bool skipFrame = true;
         // private FMOD.Studio.EventInstance bgSfx;
 
@@ -128,7 +128,7 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
 
         // pausing
         // private TextMenu pauseMenu = null;
-        private float pauseFade = 0f;
+        // private float pauseFade = 0f;
         // private FMOD.Studio.EventInstance snapshot;
 
         // pico-8 boot
@@ -180,7 +180,6 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
         {
             bootLevel = new Point(levelX, levelY);
             buffer = new VirtualRenderTarget("pico-8", 128, 128);
-            Engine.Graphics.GraphicsDevice.SetRenderTarget(buffer.Target);
 
             // sprites
             var atlas = Gfx.Game["atlas"];
@@ -319,7 +318,7 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
 
                 // logo
                 if (t == 30 || t == 35 || t == 40) {
-                    // Engine.Graphics.GraphicsDevice.SetRenderTarget(buffer);
+                    Engine.Graphics.GraphicsDevice.SetRenderTarget(buffer.Target);
                     Engine.Graphics.GraphicsDevice.Clear(colors[0]);
                     Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullNone);
                     picoBootLogo.Draw(new Vector2(1, 1));
@@ -351,7 +350,7 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
                 if (game.freeze <= 0) {
                     // draw
                     {
-                        // Engine.Graphics.GraphicsDevice.SetRenderTarget(buffer);
+                        Engine.Graphics.GraphicsDevice.SetRenderTarget(buffer.Target);
                         Engine.Graphics.GraphicsDevice.Clear(colors[0]);
                         Draw.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, RasterizerState.CullNone, null, Matrix.CreateTranslation(-offset.X, -offset.Y, 0));
                         game.Draw();
@@ -385,8 +384,7 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
             {
                 var scale = 6;
                 var size = new Vector2(buffer.Width * scale, buffer.Height * scale);
-                // var pos = new Vector2(Celeste.TargetWidth - size.X, Celeste.TargetHeight - size.Y) / 2f;
-                var pos = new Vector2(320 - size.X, 180 - size.Y) / 2f;
+                var pos = new Vector2(Engine.Width - size.X, Engine.Height - size.Y) / 2f;
                 var flip = false;
 
                 // surroundings

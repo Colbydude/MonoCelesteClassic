@@ -7,8 +7,27 @@ namespace MonoCelesteClassic
 {
     public class Engine : Game
     {
+        public string Title;
+
+        // references
         public static Engine Instance { get; private set; }
         public static GraphicsDeviceManager Graphics { get; private set; }
+
+        // screen size
+        public static int Width { get; private set; }
+        public static int Height { get; private set; }
+        public static int ViewWidth { get; private set; }
+        public static int ViewHeight { get; private set; }
+        public static int ViewPadding
+        {
+            get { return viewPadding; }
+            set {
+                viewPadding = value;
+                Instance.UpdateView();
+            }
+        }
+        private static int viewPadding = 0;
+        private static bool resizing;
 
         // time
         public static float DeltaTime { get; private set; }
@@ -19,6 +38,9 @@ namespace MonoCelesteClassic
         private TimeSpan counterElapsed = TimeSpan.Zero;
         private int fpsCounter = 0;
 
+        // util
+        public static Color ClearColor;
+
         // scene
         private Scene scene;
         private Scene nextScene;
@@ -27,9 +49,13 @@ namespace MonoCelesteClassic
         {
             Instance = this;
 
+            Width = 1920;
+            Height = 1080;
+            ClearColor = Color.Black;
+
             Graphics = new GraphicsDeviceManager(this);
-            // Graphics.DeviceReset += OnGraphicsReset;
-            // Graphics.DeviceCreated += OnGraphicsCreate;
+            Graphics.DeviceReset += OnGraphicsReset;
+            Graphics.DeviceCreated += OnGraphicsCreate;
             Graphics.SynchronizeWithVerticalRetrace = true;
             Graphics.PreferMultiSampling = false;
             Graphics.GraphicsProfile = GraphicsProfile.HiDef;
@@ -37,17 +63,13 @@ namespace MonoCelesteClassic
             Graphics.PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8;
             Graphics.ApplyChanges();
 
-            Graphics.PreferredBackBufferWidth = 1280;
-            Graphics.PreferredBackBufferWidth = 720;
-
             Window.AllowUserResizing = true;
-            // Window.ClientSizeChanged += OnClientSizeChanged;
+            Window.ClientSizeChanged += OnClientSizeChanged;
 
-            // if (fullscreen) {
-            //     Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            //     Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            //     Graphics.IsFullScreen = true;
-            // }
+            Graphics.PreferredBackBufferWidth = Width;
+            Graphics.PreferredBackBufferWidth = Height;
+            Graphics.IsFullScreen = false;
+            Graphics.ApplyChanges();
 
             Content.RootDirectory = @"Content";
 
@@ -55,9 +77,34 @@ namespace MonoCelesteClassic
             IsFixedTimeStep = false;
         }
 
+        protected virtual void OnClientSizeChanged(object sender, EventArgs e)
+        {
+            if (Window.ClientBounds.Width > 0 && Window.ClientBounds.Height > 0 && !resizing) {
+                resizing = true;
+
+                Graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
+                Graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
+                UpdateView();
+
+                resizing = false;
+            }
+        }
+
+        protected virtual void OnGraphicsCreate(object sender, EventArgs e)
+        {
+            UpdateView();
+        }
+
+        protected virtual void OnGraphicsReset(object sender, EventArgs e)
+        {
+            UpdateView();
+        }
+
         protected override void Initialize()
         {
             base.Initialize();
+
+            Title = Window.Title = "Mono Celeste Classic";
         }
 
         protected override void LoadContent()
@@ -78,6 +125,8 @@ namespace MonoCelesteClassic
         {
             RawDeltaTime = (float) gameTime.ElapsedGameTime.TotalSeconds;
             DeltaTime = RawDeltaTime * TimeRate;
+
+            // @TODO Input
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape)) {
                 Exit();
@@ -114,7 +163,7 @@ namespace MonoCelesteClassic
 
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Viewport = Viewport;
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(ClearColor);
 
             if (scene != null) {
                 scene.Render();
@@ -127,6 +176,9 @@ namespace MonoCelesteClassic
             fpsCounter++;
             counterElapsed += gameTime.ElapsedGameTime;
             if (counterElapsed >= TimeSpan.FromSeconds(1)) {
+#if DEBUG
+                Window.Title = Title + " " + fpsCounter.ToString() + " fps - " + (GC.GetTotalMemory(false) / 1048576f).ToString("F") + " MB";
+#endif
                 FPS = fpsCounter;
                 fpsCounter = 0;
                 counterElapsed -= TimeSpan.FromSeconds(1);
@@ -158,7 +210,40 @@ namespace MonoCelesteClassic
         public static Viewport Viewport { get; private set; }
         public static Matrix ScreenMatrix;
 
-        //@TODO
+        private void UpdateView()
+        {
+            float screenWidth = GraphicsDevice.PresentationParameters.BackBufferWidth;
+            float screenHeight = GraphicsDevice.PresentationParameters.BackBufferHeight;
+
+            // get view size
+            if (screenWidth / Width > screenHeight / Height) {
+                ViewWidth = (int) (screenHeight / Height * Width);
+                ViewHeight = (int) screenHeight;
+            }
+            else {
+                ViewWidth = (int) screenWidth;
+                ViewHeight = (int) (screenWidth / Width * Height);
+            }
+
+            // apply view padding
+            var aspect = ViewHeight / (float) ViewWidth;
+            ViewWidth -= ViewPadding * 2;
+            ViewHeight -= (int) (aspect * ViewPadding * 2);
+
+            // update screen matrix
+            ScreenMatrix = Matrix.CreateScale(ViewWidth / (float) Width);
+
+            // update viewport
+            Viewport = new Viewport
+            {
+                X = (int) (screenWidth / 2 - ViewWidth / 2),
+                Y = (int) (screenHeight / 2 - ViewHeight / 2),
+                Width = ViewWidth,
+                Height = ViewHeight,
+                MinDepth = 0,
+                MaxDepth = 1
+            };
+        }
 
         #endregion
     }

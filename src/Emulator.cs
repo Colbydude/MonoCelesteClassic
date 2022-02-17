@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -458,43 +459,36 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
 
         public bool btn(int index)
         {
-            // var aim = new Vector2(Input.MoveX, Input.MoveY);
-            var aim = Vector2.Zero;
+            var aim = new Vector2(Input.MoveX, Input.MoveY);
 
             if (index == 0) {
-                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.Left);
-                // return aim.X < 0;
+                return aim.X < 0;
             }
             else if (index == 1) {
-                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.Right);
-                // return aim.X > 0;
+                return aim.X > 0;
             }
             else if (index == 2) {
-                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.Up);
-                // return aim.Y < 0;
+                return aim.Y < 0;
             }
             else if (index == 3) {
-                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.Down);
-                // return aim.Y > 0;
+                return aim.Y > 0;
             }
             else if (index == 4)
-                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.Z);
+                return Input.Jump.Check;
             else if (index == 5)
-                return MInput.Keyboard.Check(Microsoft.Xna.Framework.Input.Keys.X);
+                return Input.Dash.Check;
 
             return false;
         }
 
         public int dashDirectionX(int facing)
         {
-            // return Math.Sign(Input.GetAimVector((Facings)facing).X);
-            return 0;
+            return Math.Sign(Input.GetAimVector((Facings)facing).X);
         }
 
         public int dashDirectionY(int facing)
         {
-            // return Math.Sign(Input.GetAimVector((Facings)facing).Y);
-            return 0;
+            return Math.Sign(Input.GetAimVector((Facings)facing).Y);
         }
 
         public int mget(int tx, int ty)

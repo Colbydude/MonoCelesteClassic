@@ -107,6 +107,7 @@ namespace MonoCelesteClassic
             Title = Window.Title = "Mono Celeste Classic";
 
             MInput.Initialize();
+            Input.Bind();
         }
 
         protected override void LoadContent()
@@ -119,8 +120,6 @@ namespace MonoCelesteClassic
             Gfx.Game.Add("logo", new MTexture(Content.Load<Texture2D>("Graphics/logo")));
 
             // @TODO Load Audio
-
-            // Setup Key bindings.
 
             MonoCelesteClassic.Draw.Initialize(GraphicsDevice);
 

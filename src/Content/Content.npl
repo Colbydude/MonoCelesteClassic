@@ -2,6 +2,16 @@
     "root": "",
     "references": [],
     "content": {
+        "music": {
+            "path": "Audio/Music/*.ogg",
+            "recursive": "True",
+            "action": "build",
+            "importer": "OggImporter",
+            "processor": "SoundEffectProcessor",
+            "processorParam": {
+                "Quality": "Best"
+            }
+        },
         "soundeffects": {
             "path": "Audio/SoundEffects/*.wav",
             "recursive": "True",

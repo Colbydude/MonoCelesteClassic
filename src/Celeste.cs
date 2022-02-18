@@ -35,12 +35,12 @@ namespace MonoCelesteClassic
             Gfx.Game.Add("logo", new MTexture(Content.Load<Texture2D>("Graphics/logo")));
 
             // Load music.
-            // @TODO
-            // Audio.Bgm.Add("mus0", Content.Load<Song>("Audio/Music/mus0"));
-            // Audio.Bgm.Add("mus10", Content.Load<Song>("Audio/Music/mus10"));
-            // Audio.Bgm.Add("mus20", Content.Load<Song>("Audio/Music/mus20"));
-            // Audio.Bgm.Add("mus30", Content.Load<Song>("Audio/Music/mus30"));
-            // Audio.Bgm.Add("mus40", Content.Load<Song>("Audio/Music/mus40"));
+            Audio.Bgm.Add("mus0", Content.Load<SoundEffect>("Audio/Music/mus0"));
+            Audio.Bgm.Add("mus10", Content.Load<SoundEffect>("Audio/Music/mus10"));
+            Audio.Bgm.Add("mus20", Content.Load<SoundEffect>("Audio/Music/mus20"));
+            Audio.Bgm.Add("mus30", Content.Load<SoundEffect>("Audio/Music/mus30"));
+            Audio.Bgm.Add("mus40", Content.Load<SoundEffect>("Audio/Music/mus40"));
+            Audio.Bgm.Add("pico8boot", Content.Load<SoundEffect>("Audio/Music/pico8boot"));
 
             // Load sound effects.
             Audio.Sfx.Add("snd0", Content.Load<SoundEffect>("Audio/SoundEffects/snd0"));

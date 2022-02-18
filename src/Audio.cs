@@ -1,6 +1,4 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
 
 namespace MonoCelesteClassic
@@ -10,23 +8,38 @@ namespace MonoCelesteClassic
     /// </summary>
     public static class Audio
     {
-        public static Dictionary<string, Song> Bgm = new Dictionary<string, Song>();
+        public static Dictionary<string, SoundEffect> Bgm = new Dictionary<string, SoundEffect>();
         public static Dictionary<string, SoundEffect> Sfx = new Dictionary<string, SoundEffect>();
 
-        public static Song NowPlaying = null;
+        public static SoundEffectInstance NowPlaying = null;
 
         public static void Play(string sfxIndex)
         {
-            Sfx[sfxIndex].CreateInstance().Play();
+            Sfx[sfxIndex].Play();
+        }
+
+        public static void Play (SoundEffect sfx)
+        {
+            sfx.Play();
         }
 
         public static void SetMusic(string bgmIndex)
         {
-            if (NowPlaying != null) {
-                MediaPlayer.Stop();
+            if (bgmIndex == null) {
+                NowPlaying.Stop();
+                NowPlaying.Dispose();
+
+                return;
             }
 
-            MediaPlayer.Play(Bgm[bgmIndex]);
+            if (NowPlaying != null) {
+                NowPlaying.Stop();
+                NowPlaying.Dispose();
+            }
+
+            NowPlaying = Bgm[bgmIndex].CreateInstance();
+            NowPlaying.Play();
+            NowPlaying.IsLooped = true;
         }
     }
 }

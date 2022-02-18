@@ -205,10 +205,6 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
             // boot stuff
             picoBootLogo = Gfx.Game["logo"];
             ResetScreen();
-
-            // Audio.SetMusic(null);
-            // Audio.SetAmbience(null);
-            // new FadeWipe(this, true);
         }
 
         private void ResetScreen()
@@ -223,12 +219,6 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
         }
 
         #region Scene Methods
-
-        public override void Begin()
-        {
-            // bgSfx = Audio.Play(Sfxs.env_amb_03_pico8_closeup);
-            base.Begin();
-        }
 
         public override void End()
         {
@@ -305,8 +295,8 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
                     buffer.Target.SetData(pixels);
                 }
 
-                // if (t == 30)
-                //     Audio.Play(Sfxs.music_pico8_boot);
+                if (t == 30)
+                    Audio.Play(Audio.Bgm["pico8boot"]);
 
                 // logo
                 if (t == 30 || t == 35 || t == 40) {
@@ -396,22 +386,22 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
         public void music(int index, int fade, int mask)
         {
             if (index == -1) {
-                // Audio.SetMusic(null);
+                Audio.SetMusic(null);
             }
             else if (index == 0) {
-                // Audio.SetMusic(Sfxs.music_pico8_area1);
+                Audio.SetMusic("mus0");
             }
             else if (index == 10) {
-                // Audio.SetMusic(Sfxs.music_pico8_area3);
+                Audio.SetMusic("mus10");
             }
             else if (index == 20) {
-                // Audio.SetMusic(Sfxs.music_pico8_area2);
+                Audio.SetMusic("mus20");
             }
             else if (index == 30) {
-                // Audio.SetMusic(Sfxs.music_pico8_wind);
+                Audio.SetMusic("mus30");
             }
             else if (index == 40) {
-                // Audio.SetMusic(Sfxs.music_pico8_title);
+                Audio.SetMusic("mus40");
             }
         }
 

@@ -60,3 +60,141 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Graphics/consolebg.png
+
+#begin Audio/SoundEffects/snd37.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd37.wav
+
+#begin Audio/SoundEffects/snd23.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd23.wav
+
+#begin Audio/SoundEffects/snd35.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd35.wav
+
+#begin Audio/SoundEffects/snd55.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd55.wav
+
+#begin Audio/SoundEffects/snd7.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd7.wav
+
+#begin Audio/SoundEffects/snd6.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd6.wav
+
+#begin Audio/SoundEffects/snd54.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd54.wav
+
+#begin Audio/SoundEffects/snd40.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd40.wav
+
+#begin Audio/SoundEffects/snd4.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd4.wav
+
+#begin Audio/SoundEffects/snd5.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd5.wav
+
+#begin Audio/SoundEffects/snd1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd1.wav
+
+#begin Audio/SoundEffects/snd0.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd0.wav
+
+#begin Audio/SoundEffects/snd50.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd50.wav
+
+#begin Audio/SoundEffects/snd2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd2.wav
+
+#begin Audio/SoundEffects/snd3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd3.wav
+
+#begin Audio/SoundEffects/snd51.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd51.wav
+
+#begin Audio/SoundEffects/snd8.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd8.wav
+
+#begin Audio/SoundEffects/snd9.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd9.wav
+
+#begin Audio/SoundEffects/snd16.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd16.wav
+
+#begin Audio/SoundEffects/snd14.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd14.wav
+
+#begin Audio/SoundEffects/snd15.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd15.wav
+
+#begin Audio/SoundEffects/snd38.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd38.wav
+
+#begin Audio/SoundEffects/snd13.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/SoundEffects/snd13.wav

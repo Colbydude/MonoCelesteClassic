@@ -417,7 +417,7 @@ b302b211000000110092b100000000a3b1b1b1b1b1b10011111232110000b342000000a282125284
 
         public void sfx(int sfx)
         {
-            // Audio.Play("event:/classic/sfx" + sfx);
+            Audio.Play("snd" + sfx);
         }
 
         public float rnd(float max)

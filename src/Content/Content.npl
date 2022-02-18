@@ -2,6 +2,16 @@
     "root": "",
     "references": [],
     "content": {
+        "soundeffects": {
+            "path": "Audio/SoundEffects/*.wav",
+            "recursive": "True",
+            "action": "build",
+            "importer": "WavImporter",
+            "processor": "SoundEffectProcessor",
+            "processorParam": {
+                "Quality": "Best"
+            }
+        },
         "textures": {
             "path": "Graphics/*.png",
             "recursive": "True",
